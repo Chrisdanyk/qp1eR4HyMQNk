@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="programmeDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="programmeTable" value="#{programmeBean.lazyModel}" var="programme" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="programmeTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_programme}" icon="ui-icon-plusthick" action="#{programmeBean.prepareNewProgramme()}"
+                      resetValues="true" update=":editProgrammeDialog" oncomplete="PF('editProgrammeDialogWidget').show()"
+                      rendered="#{programmeBean.isPermitted('programme:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="programmeTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{programme.image.content}" dataURI="true"
+                  rendered="#{not empty programme.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_programme_date}" sortBy="#{programme.date}" filterBy="#{programme.date}">
+            <f:facet name="filter">
+                <p:inputText id="dateFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('programmeTable').filter(); updateDateFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFilter" update="programmeTable:dateFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{programme.date}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_programme_officiant}" sortBy="#{programme.officiant}" filterBy="#{programme.officiant}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="officiantFilter"
+                            style="width:145px;"
+                            onchange="PF('programmeTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{programmeBean.officiants}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{programmeBean.officiants}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{programme.officiant.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_programme_predicateur}" sortBy="#{programme.predicateur}" filterBy="#{programme.predicateur}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="predicateurFilter"
+                            style="width:145px;"
+                            onchange="PF('programmeTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{programmeBean.predicateurs}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{programmeBean.predicateurs}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{programme.predicateur.username}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewProgrammeDialog" oncomplete="PF('viewProgrammeDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{programme}" target="#{programmeBean.programme}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editProgrammeDialog"
+                resetValues="true" rendered="#{programmeBean.isPermitted(programme, 'programme:update')}"
+                action="#{programmeBean.onDialogOpen(programme)}"
+                oncomplete="PF('editProgrammeDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{programmeBean.isPermitted(programme, 'programme:delete')}"
+                oncomplete="PF('deleteProgrammeDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{programme}"
+                    target="#{programmeBean.programme}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+        <h:panelGrid columns="2">
+            <p:panel header="#{messages.export_all_data}">
+
+                <h:commandLink>
+                    <h:graphicImage  name="images/excel.png" alt="Excel|" />
+                    <p:dataExporter type="xls" target="programmeTable" fileName="Programmes"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage name="images/pdf.png" alt="PDF|" />
+                    <p:dataExporter type="pdf" target="programmeTable" fileName="Programmes"/>
+                </h:commandLink>
+                
+                <h:commandLink>
+                    <h:graphicImage name="images/csv.png" alt="CSV" />
+                    <p:dataExporter type="csv" target="programmeTable" fileName="Programmes" />
+                </h:commandLink>
+
+            </p:panel>
+            
+            <p:panel header="#{messages.export_page_data}">
+                <h:commandLink>
+                    <h:graphicImage name="images/excel.png" alt="Excel|" />
+                    <p:dataExporter type="xls" target="programmeTable" fileName="Programmes" pageOnly="true"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage name="images/pdf.png" alt="PDF|" />
+                    <p:dataExporter type="pdf" target="programmeTable" fileName="Programmes" pageOnly="true"/>
+                </h:commandLink>
+                
+                <h:commandLink>
+                    <h:graphicImage name="images/csv.png" alt="CSV" />
+                    <p:dataExporter type="csv" target="programmeTable" fileName="Programmes" pageOnly="true"/>
+                </h:commandLink>
+                
+            </p:panel>
+        </h:panelGrid>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteProgrammeDialog" widgetVar="deleteProgrammeDialogWidget"
+        rendered="#{programmeBean.isPermitted(programmeBean.programme, 'programme:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{programmeBean.delete}" update=":programmeDataForm :growlForm:growl" oncomplete="PF('deleteProgrammeDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteProgrammeDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editProgrammeDialog" header="#{messages.label_programme_caption}"
+            modal="true" widgetVar="editProgrammeDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{programmeBean.reset}"/>
+        <h:form id="editProgrammeForm" >
+            <p:outputPanel id="programmeEditPanel">
+                <ui:include src="/pages/programme/programmeEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{programmeBean.persist}"
+                            update=":editProgrammeForm:programmeEditPanel :programmeDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editProgrammeDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editProgrammeDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewProgrammeDialog" header="#{messages.label_programme_caption}" modal="true" widgetVar="viewProgrammeDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{programmeBean.reset}" />
+        <h:form id="viewProgrammeForm">
+          <ui:include src="/pages/programme/programmeViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewProgrammeDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,174 @@
+{
+  "info1": "======================================================================================================",
+  "info2": "= This Project was generated with generjee. http://generjee.com                                      =",
+  "info3": "= You can import this file into the generjee tool, then change the project model and generate again. =",
+  "info4": "======================================================================================================",
+  "entities": [
+    {
+      "name": "User",
+      "id": "User",
+      "lookupField": "username",
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "username",
+          "name": "Username",
+          "type": "String",
+          "editable": false,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": true
+        },
+        {
+          "id": "password",
+          "name": "Password",
+          "type": "Password",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "email",
+          "name": "E-mail",
+          "type": "String",
+          "editable": false,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": true
+        },
+        {
+          "id": "roles",
+          "name": "Roles",
+          "type": "Enumeration",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "status",
+          "name": "Status",
+          "type": "Enumeration",
+          "editable": false,
+          "showInTable": true,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Programme",
+      "id": 1,
+      "lookupField": 0,
+      "exportable": true,
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "date",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "officiant",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User"
+        },
+        {
+          "id": 3,
+          "name": "predicateur",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User"
+        }
+      ]
+    }
+  ],
+  "appSettings": {
+    "generjeeversion": "1.0",
+    "appName": "Priere",
+    "package": "org.priere",
+    "masterDetailsStyle": "1",
+    "dataListStyle": "1",
+    "pfTheme": "bootstrap",
+    "runtarget": "as",
+    "layer": {
+      "rest": false
+    },
+    "manageRolesAndUsers": true,
+    "createRegistrationForm": true,
+    "roles": [
+      {
+        "id": 1,
+        "name": "Administrator",
+        "canBeDeleted": false
+      },
+      {
+        "id": 2,
+        "name": "Public",
+        "canBeDeleted": false
+      },
+      {
+        "id": "registered001",
+        "name": "Registered",
+        "canBeDeleted": false
+      }
+    ]
+  },
+  "guid": "f13793ec-e48b-41ef-fbfd-6ece3fd85c26"
+}

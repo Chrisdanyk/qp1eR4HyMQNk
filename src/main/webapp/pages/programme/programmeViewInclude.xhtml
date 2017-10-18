@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <p:outputPanel styleClass="ui-fluid" rendered="#{not programmeBean.isPermitted(programmeBean.programme, 'programme:read')}">
+        <h:outputText value="#{messages.access_denied}" />
+    </p:outputPanel>
+    
+    <p:panel header="#{messages.label_image}" style="max-width:400px" rendered="#{programmeBean.isPermitted(programmeBean.programme, 'programme:read')}">
+        <o:graphicImage value="#{programmeBean.uploadedImageContents}" dataURI="true"
+            rendered="#{not empty programmeBean.uploadedImageContents}" width="200px"/>
+    </p:panel>
+    
+    <h:panelGrid columns="2" styleClass="dialog" columnClasses="col1,col2" rendered="#{programmeBean.isPermitted(programmeBean.programme, 'programme:read')}">
+        
+        <h:outputText value="#{messages.field_label_programme_date}:" />
+        <h:outputText value="#{programmeBean.programme.date}" ><f:convertDateTime /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_programme_officiant}:" />
+        <h:outputText value="#{programmeBean.programme.officiant.username}" />
+
+        <h:outputText value="#{messages.field_label_programme_predicateur}:" />
+        <h:outputText value="#{programmeBean.programme.predicateur.username}" />
+
+    </h:panelGrid>
+</html>
